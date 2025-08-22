@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:Santhosh@002@localhost:3306/blogspot"
+}
+
+model Blog {
+  id             Int       @id @default(autoincrement())
+  title          String
+  subTitle       String?
+  description    String    @db.LongText
+  category       String
+  categorySlug   String
+  slug           String    @unique
+  views          Int       @default(0)
+  image          String?
+  imageAlt       String?
+  isScheduled    Boolean   @default(false)
+  scheduledTime  DateTime?
+  isPublished    Boolean?
+  theme          String
+  isReminderSent Boolean   @default(false)
+  isDraft        Boolean   @default(false)
+  isTrash        Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  adminId        Int
+  admin          Admin     @relation(fields: [adminId], references: [id])
+  faqs           Faq[]
+  comments       Comment[]
+}
+
+model Faq {
+  id       Int    @id @default(autoincrement())
+  question String
+  answer   String
+
+  // Relations
+  blogId   Int
+  blog     Blog   @relation(fields: [blogId], references: [id])
+}
+
+model Admin {
+  id          Int      @id @default(autoincrement())
+  userEmail   String   @unique
+  password    String
+  userName    String?
+  profilePic  String?
+  address     String?
+  phoneNumber String?  @unique
+  role        String   @default("Admin")
+  // Relations
+  blogs       Blog[]
+}
+
+model SuperAdmin {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  userName  String?
+  role      String  @default("superAdmin")
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  name       String
+  content    String
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  blogId     Int
+  blog       Blog     @relation(fields: [blogId], references: [id])
+}
+
+model Subscribe {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+}
+
+model CourseData {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(20)
+  phoneNumber  String   @unique @db.Char(10)
+  whatsAppNum  String   @unique @db.Char(10)
+  email        String   @unique @db.VarChar(255)
+  courseName   CourseName @default(FULL_STACK_WEB_DEVELOPMENT)
+  leadId       String   @unique @default(dbgenerated()) // will need to be generated in backend logic
+  district     String   @db.VarChar(255)
+  callStatus   CallStatus @default(PENDING)
+  assignedTo   LeadUser?    @relation(fields: [assignedToId], references: [id])
+  assignedToId Int?
+  assignedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model LeadUser {
+  id         Int          @id @default(autoincrement())
+  name       String
+  // Add other user fields as needed
+  courses    CourseData[] // 1:N relation
+}
+
+// Enums
+enum CourseName {
+  FULL_STACK_WEB_DEVELOPMENT
+  FULL_STACK_APP_DEVELOPMENT
+  ARTIFICIAL_INTELLIGENCE
+  MACHINE_LEARNING
+}
+
+enum CallStatus {
+  PENDING
+  ATTEMPTED
+}
