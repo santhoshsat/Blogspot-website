@@ -1,3 +1,8 @@
+🌐 Blogspot Website
+
+A modern and fully responsive Blogspot-inspired website built with  React, Node.js, sql
+This project is designed for blogging, article publishing, and content management with features like blog categories, FAQs, comments, related posts, and theme customization.
+
 ✨ Features
 
 📝 Rich Blog Editor ( Quill supported)
