@@ -1,3 +1,5 @@
+// admin router
+
 const express = require('express')
 const upload = require('../middleware/multerMiddleware.js')
 const { uploadEditorFile } = require('../controller/uploadController.js')
